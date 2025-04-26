@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Competitions</title>
+    <link rel="stylesheet" href="styles.css"> <!-- Link to external CSS -->
+</head>
+<body>
+    <div class="container">
+        <h1>Competitions</h1>
+        <div id="compList"></div>
+        <button onclick="goBack()">Go Back</button>
+        <button onclick="addCompetition()">Add Competition</button>
+    </div>
+
+    <script src="script.js"></script> <!-- Link to external JS -->
+    <script>
+        // Initialize empty array for competitions if it doesn't exist in localStorage
+        if (!localStorage.getItem("competitions")) {
+            localStorage.setItem("competitions", JSON.stringify([]));
+        }
+
+        function renderCompetitions() {
+            const compList = document.getElementById("compList");
+            const competitions = JSON.parse(localStorage.getItem("competitions"));
+            compList.innerHTML = "";
+            competitions.forEach((comp, index) => {
+                const div = document.createElement('div');
+                div.className = 'card';
+                div.innerHTML = `
+                    <h3>${comp.title}</h3>
+                    <p>${comp.details}</p>
+                    <button class="edit-btn" onclick="editCompetition(${index})">✏️ Edit</button>
+                    <button class="delete-btn" onclick="deleteCompetition(${index})">❌ Delete</button>
+                `;
+                compList.appendChild(div);
+            });
+        }
+
+        function addCompetition() {
+            const title = prompt("Enter competition title:");
+            const details = prompt("Enter competition details:");
+            const competitions = JSON.parse(localStorage.getItem("competitions"));
+            competitions.push({ title, details });
+            localStorage.setItem("competitions", JSON.stringify(competitions));
+            renderCompetitions();
+        }
+
+        function editCompetition(index) {
+            const competitions = JSON.parse(localStorage.getItem("competitions"));
+            const newTitle = prompt("Edit Title:", competitions[index].title);
+            const newDetails = prompt("Edit Details:", competitions[index].details);
+            if (newTitle && newDetails) {
+                competitions[index].title = newTitle;
+                competitions[index].details = newDetails;
+                localStorage.setItem("competitions", JSON.stringify(competitions));
+                renderCompetitions();
+            }
+        }
+
+        function deleteCompetition(index) {
+            const password = prompt("Enter delete password:");
+            if (password === "atlbvn@2025") {
+                const competitions = JSON.parse(localStorage.getItem("competitions"));
+                competitions.splice(index, 1);
+                localStorage.setItem("competitions", JSON.stringify(competitions));
+                renderCompetitions();
+            } else {
+                alert("Incorrect password!");
+            }
+        }
+
+        function goBack() {
+            window.history.back();
+        }
+
+        // Call the function to render competitions initially
+        renderCompetitions();
+    </script>
+</body>
+</html>

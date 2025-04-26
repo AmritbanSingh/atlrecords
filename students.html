@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Students</title>
+    <link rel="stylesheet" href="styles.css"> <!-- Link to external CSS -->
+</head>
+<body>
+    <div class="container">
+        <h1>Students</h1>
+        <div id="studentList"></div>
+        <button onclick="goBack()">Go Back</button>
+        <button onclick="addStudent()">Add Student</button>
+    </div>
+
+    <script src="script.js"></script> <!-- Link to external JS -->
+    <script>
+        // Initialize empty array for students if it doesn't exist in localStorage
+        if (!localStorage.getItem("students")) {
+            localStorage.setItem("students", JSON.stringify([]));
+        }
+
+        function renderStudents() {
+            const studentList = document.getElementById("studentList");
+            const students = JSON.parse(localStorage.getItem("students"));
+            studentList.innerHTML = "";
+            students.forEach((student, index) => {
+                const div = document.createElement('div');
+                div.className = 'card';
+                div.innerHTML = `
+                    <h3>${student.name}</h3>
+                    <p>${student.achievement}</p>
+                    <button class="edit-btn" onclick="editStudent(${index})">✏️ Edit</button>
+                    <button class="delete-btn" onclick="deleteStudent(${index})">❌ Delete</button>
+                `;
+                studentList.appendChild(div);
+            });
+        }
+
+        function addStudent() {
+            const name = prompt("Enter student name:");
+            const achievement = prompt("Enter student achievement:");
+            const students = JSON.parse(localStorage.getItem("students"));
+            students.push({ name, achievement });
+            localStorage.setItem("students", JSON.stringify(students));
+            renderStudents();
+        }
+
+        function editStudent(index) {
+            const students = JSON.parse(localStorage.getItem("students"));
+            const newName = prompt("Edit Name:", students[index].name);
+            const newAchievement = prompt("Edit Achievement:", students[index].achievement);
+            if (newName && newAchievement) {
+                students[index].name = newName;
+                students[index].achievement = newAchievement;
+                localStorage.setItem("students", JSON.stringify(students));
+                renderStudents();
+            }
+        }
+
+        function deleteStudent(index) {
+            const password = prompt("Enter delete password:");
+            if (password === "atlbvn@2025") {
+                const students = JSON.parse(localStorage.getItem("students"));
+                students.splice(index, 1);
+                localStorage.setItem("students", JSON.stringify(students));
+                renderStudents();
+            } else {
+                alert("Incorrect password!");
+            }
+        }
+
+        function goBack() {
+            window.history.back();
+        }
+
+        // Call the function to render students initially
+        renderStudents();
+    </script>
+</body>
+</html>
